@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi invitación</title>
+    <!-- Biblioteca externa de confeti -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        body {
+            background-color: #ffffff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 30px 10px;
+            overflow: hidden; 
+            margin: 0;
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.1s ease;
+        }
+
+        p { color: #864455; font-size: 24px; font-weight: bold; }
+
+        button {
+            background-color: #e88eae;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #pantalla-inicial {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor-botones { position: relative; margin-top: 40px; height: 250px; width: 100%; }
+
+        #btn-si { position: absolute; left: 35%; top: 20px; transform: translateX(-50%); z-index: 10; }
+        #btn-no { position: absolute; left: 65%; top: 20px; transform: translateX(-50%); transition: all 0.2s ease; }
+        #btn-si-final { position: absolute; left: 35%; top: 20px; transform: translateX(-50%); z-index: 10; }
+        #btn-no-final { position: absolute; left: 65%; top: 20px; transform: translateX(-50%); transition: all 0.2s ease; }
+
+        #pantalla-final { display: none; opacity: 0; width: 100%; max-width: 500px; }
+
+        .aparecer-desplazado {
+            display: block !important;
+            animation: deslizarArriba 0.8s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .contenedor-meme { position: relative; display: inline-block; margin-bottom: 20px; }
+        #meme-chango { width: 660px; height: 590px; }
+        #meme-bebe { width: 550px; height: 550px; }
+
+        .imagen-bebe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .texto-sobre-imagen {
+            position: absolute;
+            top: 82%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 36px;
+            font-weight: 500;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            width: 95%;
+            line-height: 1.2;
+            text-transform: lowercase; 
+            text-shadow: 
+                -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000,
+                -3px 0px 0 #000, 3px 0px 0 #000, 0px -3px 0 #000, 0px 3px 0 #000;
+        }
+
+        .ventana-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); z-index: 100;
+            justify-content: center; align-items: center;
+        }
+
+        .contenido-modal {
+            background-color: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 85%; width: 350px;
+            animation: estallar 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .contenido-modal p { margin-bottom: 20px; font-size: 22px; color: #864455; font-weight: bold; }
+
+        /* ANIMACIÓN: Parpadeo multicolor */
+        .parpadeo-colores { animation: fiestaColores 0.4s infinite; }
+
+        @keyframes fiestaColores {
+            0% { background-color: #ffadad; }
+            20% { background-color: #ffd6a5; }
+            40% { background-color: #fdffb6; }
+            60% { background-color: #caffbf; }
+            80% { background-color: #9bf6ff; }
+            100% { background-color: #a0c4ff; }
+        }
+
+        @keyframes deslizarArriba { 0% { opacity: 0; transform: translateY(100px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes estallar { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA INICIAL -->
+    <div id="pantalla-inicial">
+        <div class="contenedor-meme" id="meme-chango">
+            <a href="https://ibb.co"><img src="https://ibb.co" alt="Changuito" border="0"></a>
+            <div class="texto-sobre-imagen">Quiero proponerte algo...</div>
+        </div>
+        
+        <div class="contenedor-botones">
+            <button id="btn-si">¡Me interesa!</button>
+            <button id="btn-no">¡No me interesa!</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA FINAL -->
+    <div id="pantalla-final">
+        <div class="contenedor-meme" id="meme-bebe">
+            <img src="https://ibb.co" alt="Bebé elote" class="imagen-bebe">
+            <div class="texto-sobre-imagen">¿vamos por unos elotitos?</div>
+        </div>
+        <div class="contenedor-botones">
+            <button id="btn-si-final">¡Sí quiero!</button>
+            <button id="btn-no-final">¡No quiero!</button>
+        </div>
+    </div>
+
+    <!-- VENTANA EMERGENTE FINAL -->
+    <div id="mi-modal" class="ventana-modal">
+        <div class="contenido-modal">
+            <p>Wujuuu entonces pongámonos de acuerdoooo jajaja <b>🌽✨</b></p>
+            <button id="btn-cerrar">¡Listo!</button>
+        </div>
+    </div>
+<script>
+        const btnNo = document.getElementById('btn-no');
+        const btnSi = document.getElementById('btn-si');
+        const pantallaInicial = document.getElementById('pantalla-inicial');
+        const pantallaFinal = document.getElementById('pantalla-final');
+        const btnSiFinal = document.getElementById('btn-si-final');
+        const btnNoFinal = document.getElementById('btn-no-final');
+        const modal = document.getElementById('mi-modal');
+        const btnCerrar = document.getElementById('btn-cerrar');
+
+        function moverBoton(boton) {
+            const pad = 20; 
+            const xMax = window.innerWidth - boton.offsetWidth - pad;
+            const yMax = window.innerHeight - boton.offsetHeight - pad;
+            let x = Math.random() * xMax;
+            let y = Math.random() * yMax;
+            boton.style.left = `${Math.max(pad, Math.min(x, xMax))}px`;
+            boton.style.top = `${Math.max(pad, Math.min(y, yMax))}px`;
+        }
+
+        btnNo.addEventListener('mouseover', () => moverBoton(btnNo));
+        btnNo.addEventListener('touchstart', (e) => { e.preventDefault(); moverBoton(btnNo); });
+        btnNoFinal.addEventListener('mouseover', () => moverBoton(btnNoFinal));
+        btnNoFinal.addEventListener('touchstart', (e) => { e.preventDefault(); moverBoton(btnNoFinal); });
+
+        btnSi.addEventListener('click', () => {
+            pantallaInicial.style.display = 'none';
+            pantallaFinal.classList.add('aparecer-desplazado');
+        });
+
+        // Activar efectos al presionar "¡Sí quiero!"
+        btnSiFinal.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            document.body.classList.add('parpadeo-colores');
+
+            // Lanzar confeti continuo por ambos lados
+            const duracion = 4000;
+            const finalizacion = Date.now() + duracion;
+
+            (function lanzarRafaga() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0, y: 0.8 } });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1, y: 0.8 } });
+                if (Date.now() < finalizacion) { requestAnimationFrame(lanzarRafaga); }
+            }());
+        });
+
+        btnCerrar.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.body.classList.remove('parpadeo-colores');
+        });
+    </script>
+</body>
+</html>
